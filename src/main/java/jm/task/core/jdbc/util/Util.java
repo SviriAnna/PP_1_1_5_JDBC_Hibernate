@@ -9,6 +9,9 @@ public class Util {
     private static final String userName = "root";
     private static final String password = "root";
     public static Connection connection;
+    public static Connection getConnection() {
+        return connection;
+    }
     static {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
