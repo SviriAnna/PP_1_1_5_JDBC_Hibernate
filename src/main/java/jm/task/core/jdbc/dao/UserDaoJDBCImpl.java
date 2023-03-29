@@ -1,49 +1,49 @@
 package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
+
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static jm.task.core.jdbc.util.Util.connection;
+import static jm.task.core.jdbc.util.Util.getConnection;
+
 
 public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
+
     public UserDaoJDBCImpl() {
 
     }
-
+    UserDaoJDBCImpl userDaoJDBC;
     public void createUsersTable() throws SQLException {
 
-        try (Statement statement = connection.createStatement()) {
-            String SQL = "CREATE TABLE if not exists userTable(id LONG, name varchar(255), lastname varchar(255), age tinyint)";
+        try (Statement statement = getConnection().createStatement()) {
+            String SQL = "CREATE TABLE if not exists userTable(id bigINT AUTO_INCREMENT, name varchar(255), lastname varchar(255), age tinyint, PRIMARY KEY (id))";
             statement.executeUpdate(SQL);
         }
     }
     public void dropUsersTable() throws SQLException {
-        try (Statement statement = connection.createStatement()) {
+        try (Statement statement = getConnection().createStatement()) {
             String SQL = "DROP TABLE if exists userTable";
             statement.executeUpdate(SQL);
         }
     }
 
     public void saveUser(String name, String lastName, byte age) throws SQLException {
-        long ID = Math.abs(new Random().nextLong());
         try (PreparedStatement preparedStatement =
-                     connection.prepareStatement("INSERT INTO usertable VALUES(?,?,?,?)")) {
-            preparedStatement.setLong(1, ID);
-            preparedStatement.setString(2, name);
-            preparedStatement.setString(3, lastName);
-            preparedStatement.setByte(4, age);
+                     getConnection().prepareStatement("INSERT INTO usertable VALUES(id,?,?,?)")) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
             preparedStatement.executeUpdate();
         }
     }
 
     public void removeUserById(long id) throws SQLException {
         try (PreparedStatement preparedStatement =
-                     connection.prepareStatement("DELETE FROM usertable WHERE `ID` = ?")) {
+                     getConnection().prepareStatement("DELETE FROM usertable WHERE `ID` = ?")) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         }
@@ -51,7 +51,7 @@ public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
 
     public List<User> getAllUsers() throws SQLException {
         List<User> users = new ArrayList<>();
-        try (Statement statement = connection.createStatement();) {
+        try (Statement statement = getConnection().createStatement();) {
             String SQL = "SELECT * FROM usertable";
             ResultSet resultSet = statement.executeQuery(SQL);
             while (resultSet.next()) {
@@ -67,7 +67,7 @@ public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
     }
 
     public void cleanUsersTable() throws SQLException {
-        try(Statement statement = connection.createStatement()) {
+        try(Statement statement = getConnection().createStatement()) {
             String SQL = "DELETE from usertable";
             statement.executeUpdate(SQL);
         }
