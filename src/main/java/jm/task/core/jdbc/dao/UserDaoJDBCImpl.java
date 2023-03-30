@@ -1,15 +1,16 @@
 package jm.task.core.jdbc.dao;
 
+
 import jm.task.core.jdbc.model.User;
 
-
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static jm.task.core.jdbc.util.Util.getConnection;
-
 
 public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
 
@@ -43,7 +44,7 @@ public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
 
     public void removeUserById(long id) throws SQLException {
         try (PreparedStatement preparedStatement =
-                     getConnection().prepareStatement("DELETE FROM usertable WHERE `ID` = ?")) {
+                     getConnection().prepareStatement("DELETE FROM userTable WHERE `ID` = ?")) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         }
@@ -77,3 +78,4 @@ public class UserDaoJDBCImpl implements UserDao, AutoCloseable {
     super.clone();
     }
 }
+
