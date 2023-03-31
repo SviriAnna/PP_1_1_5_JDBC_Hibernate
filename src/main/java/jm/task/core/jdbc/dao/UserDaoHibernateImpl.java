@@ -81,7 +81,7 @@ public class UserDaoHibernateImpl implements UserDao, Serializable {
     public void cleanUsersTable() {
         try (Session session = getSessionFactory().openSession()) {
             session.beginTransaction();
-            session.createQuery("DELETE FROM User").executeUpdate();
+            session.createNativeQuery("truncate table usertable").executeUpdate();
             session.getTransaction().commit();
         }
     }
